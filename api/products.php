@@ -39,10 +39,20 @@ class Products
 
     public function getAll($page = 1, $limit = 10)
     {
+        $page = (int)$page;
+        $limit = (int)$limit;
         $start = ($page - 1) * $limit;
-        $query = "SELECT * FROM " . $this->table_name . " LIMIT ?, ?";
+
+        $count_query = "SELECT COUNT(*) as total FROM " . $this->table_name;
+        $count_stmt = $this->conn->prepare($count_query);
+        $count_stmt->execute();
+        $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+        $query = "SELECT * FROM " . $this->table_name . " LIMIT :start, :limit";
         $stmt = $this->conn->prepare($query);
-        $stmt->execute([$start, $limit]);
+        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
 
         $products = array();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -54,7 +64,13 @@ class Products
 
         return array(
             "status" => true,
-            "data" => $products
+            "data" => $products,
+            "pagination" => array(
+                "page" => $page,
+                "limit" => $limit,
+                "total_records" => (int)$total_records,
+                "total_pages" => ceil($total_records / $limit)
+            )
         );
     }
 
