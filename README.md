@@ -328,7 +328,7 @@ Silakan buat issue atau pull request jika ingin berkontribusi pada project ini.
 
 MIT License
 
-# Penggunaaan Web Admin Batik
+## Penggunaaan Web Admin Batik
 
 1. Update /admin/config/config.php sesuaikan dengan user, password, dan database
    ```
