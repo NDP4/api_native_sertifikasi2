@@ -143,20 +143,32 @@ include 'connections.php';
                       <input type="number" class="form-control" id="hargabeli" name="hargabeli" required>
                     </div>
                     <div class="form-group">
-                      <label for="diskonbeli">Diskon Beli</label>
-                      <input type="number" class="form-control" id="diskonbeli" name="diskonbeli" required>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="toggleDiskonBeli">
+                        <label class="form-check-label" for="toggleDiskonBeli">Ada Diskon Beli?</label>
+                      </div>
+                    </div>
+                    <div class="form-group" id="formDiskonBeli" style="display:none;">
+                      <label for="diskonbeli">Diskon Beli (%)</label>
+                      <input type="number" class="form-control" id="diskonbeli" name="diskonbeli">
                     </div>
                     <div class="form-group">
                       <label for="hargapokok">Harga Pokok</label>
-                      <input type="number" class="form-control" id="hargapokok" name="hargapokok" required>
+                      <input type="number" class="form-control" id="hargapokok" name="hargapokok">
                     </div>
                     <div class="form-group">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="toggleDiskonJual">
+                        <label class="form-check-label" for="toggleDiskonJual">Ada Diskon Jual?</label>
+                      </div>
+                    </div>
+                    <div class="form-group" id="formDiskonJual" style="display:none;">
+                      <label for="diskonjual">Diskon Jual (%)</label>
+                      <input type="number" class="form-control" id="diskonjual" name="diskonjual">
+                    </div>
+                    <div class="form-group" id="formHargaJual">
                       <label for="hargajual">Harga Jual</label>
-                      <input type="number" class="form-control" id="hargajual" name="hargajual" required>
-                    </div>
-                    <div class="form-group">
-                      <label for="diskonjual">Diskon Jual</label>
-                      <input type="number" class="form-control" id="diskonjual" name="diskonjual" required>
+                      <input type="number" class="form-control" id="hargajual" name="hargajual">
                     </div>
                     <div class="form-group">
                       <label for="stok">Stok</label>
@@ -507,6 +519,72 @@ include 'connections.php';
 
   <!-- script modal -->
   <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const toggleDiskonBeli = document.getElementById('toggleDiskonBeli');
+      const formDiskonBeli = document.getElementById('formDiskonBeli');
+      const inputDiskonBeli = document.getElementById('diskonbeli');
+
+      const toggleDiskonJual = document.getElementById('toggleDiskonJual');
+      const formDiskonJual = document.getElementById('formDiskonJual');
+      const formHargaJual = document.getElementById('formHargaJual');
+      const inputDiskonJual = document.getElementById('diskonjual');
+      const inputHargaPokok = document.getElementById('hargapokok');
+      const inputHargaJual = document.getElementById('hargajual');
+
+      // Diskon Beli toggle
+      toggleDiskonBeli.addEventListener('change', function () {
+        if (this.checked) {
+          formDiskonBeli.style.display = 'block';
+          inputDiskonBeli.required = true;
+        } else {
+          formDiskonBeli.style.display = 'none';
+          inputDiskonBeli.value = 0;
+          inputDiskonBeli.required = false;
+        }
+      });
+
+      // Diskon Jual toggle
+      toggleDiskonJual.addEventListener('change', function () {
+        if (this.checked) {
+          formDiskonJual.style.display = 'block';
+          inputDiskonJual.required = true;
+          formHargaJual.style.display = 'block';
+          inputHargaJual.required = true;
+        } else {
+          formDiskonJual.style.display = 'none';
+          inputDiskonJual.value = 0;
+          inputDiskonJual.required = false;
+          inputHargaJual.value = inputHargaPokok.value;
+          inputHargaJual.required = false;
+        }
+      });
+
+      // Hitung Harga Jual otomatis berdasarkan diskon
+      inputDiskonJual.addEventListener('input', function () {
+        const hargaPokok = parseFloat(inputHargaPokok.value);
+        const diskon = parseFloat(inputDiskonJual.value);
+        if (!isNaN(hargaPokok) && !isNaN(diskon)) {
+          const hargaJual = hargaPokok - (hargaPokok * (diskon / 100));
+          inputHargaJual.value = Math.round(hargaJual);
+        }
+      });
+
+      // Jika harga pokok berubah, update juga harga jual
+      inputHargaPokok.addEventListener('input', function () {
+        if (toggleDiskonJual.checked) {
+          const diskon = parseFloat(inputDiskonJual.value);
+          const hargaPokok = parseFloat(inputHargaPokok.value);
+          if (!isNaN(hargaPokok) && !isNaN(diskon)) {
+            const hargaJual = hargaPokok - (hargaPokok * (diskon / 100));
+            inputHargaJual.value = Math.round(hargaJual);
+          }
+        } else {
+          inputHargaJual.value = inputHargaPokok.value;
+        }
+      });
+    });
+
+    // DataTable
     $(document).ready(function () {
       if ($.fn.DataTable.isDataTable('#dataTable')) {
         $('#dataTable').DataTable().destroy();
