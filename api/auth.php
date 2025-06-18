@@ -72,7 +72,7 @@ $auth = new Auth($db);
 $data = json_decode(file_get_contents("php://input"), true);
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 // Check request type from the request body
-$action = isset($data['action']) ? $data['action'] : '';
+$action = isset($_GET['action']) ? $_GET['action'] : '';
 
 if ($requestMethod === "POST") {
     if ($action === "login") {
