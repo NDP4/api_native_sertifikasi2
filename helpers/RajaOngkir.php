@@ -21,13 +21,15 @@ class RajaOngkir
         $curl_options = [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_SSL_VERIFYHOST => 0,
-            CURLOPT_SSL_VERIFYPEER => 0
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => $method,
+            CURLOPT_HTTPHEADER => $headers
         ];
 
         if ($method === 'POST') {
-            $curl_options[CURLOPT_POST] = true;
             $curl_options[CURLOPT_POSTFIELDS] = http_build_query($data);
         }
 
@@ -35,17 +37,29 @@ class RajaOngkir
 
         $response = curl_exec($curl);
         $err = curl_error($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
 
         if ($err) {
             return [
                 'status' => false,
+                'code' => $httpCode,
                 'message' => $err
             ];
         }
 
-        return json_decode($response, true);
+        $result = json_decode($response, true);
+
+        if (!$result) {
+            return [
+                'status' => false,
+                'code' => $httpCode,
+                'message' => 'Failed to decode response'
+            ];
+        }
+
+        return $result;
     }
 
     public function getProvinces()
@@ -64,6 +78,13 @@ class RajaOngkir
 
     public function calculateShipping($destination, $weight)
     {
+        if (!$destination || !$weight) {
+            return [
+                'status' => false,
+                'message' => 'Destination and weight are required'
+            ];
+        }
+
         $data = [
             'origin' => $this->originCity,
             'destination' => $destination,
@@ -71,7 +92,20 @@ class RajaOngkir
             'courier' => 'jne'
         ];
 
-        return $this->curlRequest('cost', $data, 'POST');
+        $result = $this->curlRequest('cost', $data, 'POST');
+
+        if (isset($result['rajaongkir']) && isset($result['rajaongkir']['results'])) {
+            return [
+                'status' => true,
+                'data' => $result['rajaongkir']
+            ];
+        }
+
+        return [
+            'status' => false,
+            'message' => 'Failed to calculate shipping cost',
+            'raw_response' => $result
+        ];
     }
 }
 

@@ -133,7 +133,9 @@ if ($requestMethod === "POST") {
 } elseif ($requestMethod === "GET") {
     if (isset($_GET['action']) && $_GET['action'] === 'shipping') {
         if (isset($_GET['city_id']) && isset($_GET['weight'])) {
-            echo json_encode($orders->calculateShipping($_GET['city_id'], $_GET['weight']));
+            $result = $orders->calculateShipping($_GET['city_id'], $_GET['weight']);
+            error_log('Shipping calculation result: ' . print_r($result, true));
+            echo json_encode($result);
         } else {
             echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
         }
