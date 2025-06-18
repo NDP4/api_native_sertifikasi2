@@ -133,6 +133,22 @@ Response:
 }
 ```
 
+#### Get Category
+
+```
+GET /api/products.php?action=categories
+
+Response:
+{
+    "status": true,
+    "data": [
+        "Batik Tulis",
+        "Batik Cap",
+        "Batik Printing"
+    ]
+}
+```
+
 #### Search Products
 
 ```
@@ -218,22 +234,6 @@ Response:
             "total_bayar": 194000,
             "status": 1
         }
-    ]
-}
-```
-
-#### Get Category
-
-```
-GET /api/products.php?action=categories
-
-Response:
-{
-    "status": true,
-    "data": [
-        "Batik Tulis",
-        "Batik Cap",
-        "Batik Printing"
     ]
 }
 ```
