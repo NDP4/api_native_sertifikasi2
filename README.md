@@ -222,6 +222,22 @@ Response:
 }
 ```
 
+#### Get Category
+
+```
+GET /api/products.php?action=categories
+
+Response:
+{
+    "status": true,
+    "data": [
+        "Batik Tulis",
+        "Batik Cap",
+        "Batik Printing"
+    ]
+}
+```
+
 #### Get Order Detail
 
 ```

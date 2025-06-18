@@ -155,6 +155,24 @@ class Products
             return array("status" => false, "message" => "Sorry, there was an error uploading your file.");
         }
     }
+
+    public function getCategories() 
+    {
+        $query = "SELECT DISTINCT kategori FROM " . $this->table_name . " WHERE kategori IS NOT NULL ORDER BY kategori";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        $categories = array();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $categories[] = $row['kategori'];
+        }
+
+        // return $categories;
+        return array(
+            "status" => true,
+            "data" => $categories
+        );
+    }
 }
 
 $database = new Database();
@@ -166,7 +184,9 @@ $requestMethod = $_SERVER["REQUEST_METHOD"];
 if ($requestMethod === "POST" && isset($_FILES['foto'])) {
     echo json_encode($products->uploadImage($_FILES['foto']));
 } elseif ($requestMethod === "GET") {
-    if (isset($_GET['kode'])) {
+    if (isset($_GET['action']) && $_GET['action'] === 'categories') {
+        echo json_encode($products->getCategories());
+    } elseif (isset($_GET['kode'])) {
         echo json_encode($products->getById($_GET['kode']));
     } elseif (isset($_GET['search'])) {
         echo json_encode($products->search($_GET['search']));

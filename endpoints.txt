@@ -40,6 +40,10 @@ Products
    - Query params:
      - search: search keyword
 
+11. GET /api/products.php?action=categories
+    - Get all unique product categories
+    - Returns array of category names
+
 Orders
 ------
 6. POST /api/orders.php
