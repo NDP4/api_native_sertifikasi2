@@ -71,18 +71,23 @@ $auth = new Auth($db);
 
 $data = json_decode(file_get_contents("php://input"), true);
 $requestMethod = $_SERVER["REQUEST_METHOD"];
-$endpoint = basename($_SERVER['PHP_SELF']);
+// Check request type from the request body
+$action = isset($data['action']) ? $data['action'] : '';
 
-if ($endpoint === "login.php" && $requestMethod === "POST") {
-    if (isset($data['email']) && isset($data['password'])) {
-        echo json_encode($auth->login($data['email'], $data['password']));
+if ($requestMethod === "POST") {
+    if ($action === "login") {
+        if (isset($data['email']) && isset($data['password'])) {
+            echo json_encode($auth->login($data['email'], $data['password']));
+        } else {
+            echo json_encode(array("status" => false, "message" => "Missing required fields"));
+        }
+    } elseif ($action === "register") {
+        if (isset($data['email']) && isset($data['password']) && isset($data['nama'])) {
+            echo json_encode($auth->register($data));
+        } else {
+            echo json_encode(array("status" => false, "message" => "Missing required fields"));
+        }
     } else {
-        echo json_encode(array("status" => false, "message" => "Missing required fields"));
-    }
-} elseif ($endpoint === "register.php" && $requestMethod === "POST") {
-    if (isset($data['email']) && isset($data['password']) && isset($data['nama'])) {
-        echo json_encode($auth->register($data));
-    } else {
-        echo json_encode(array("status" => false, "message" => "Missing required fields"));
+        echo json_encode(array("status" => false, "message" => "Invalid action"));
     }
 }
