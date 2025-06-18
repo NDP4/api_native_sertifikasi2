@@ -69,7 +69,6 @@ class Products
     }
 }
 
-// Handle requests
 $database = new Database();
 $db = $database->getConnection();
 $products = new Products($db);

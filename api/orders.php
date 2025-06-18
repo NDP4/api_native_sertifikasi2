@@ -5,16 +5,19 @@ header("Access-Control-Allow-Methods: POST, GET");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
+include_once '../helpers/RajaOngkir.php';
 
 class Orders
 {
     private $conn;
     private $order_table = "tbl_order";
     private $detail_table = "tbl_order_detail";
+    private $rajaOngkir;
 
     public function __construct($db)
     {
         $this->conn = $db;
+        $this->rajaOngkir = new RajaOngkir();
     }
 
     public function createOrder($data)
@@ -111,6 +114,11 @@ class Orders
             "data" => $items
         );
     }
+
+    public function calculateShipping($cityId, $weight)
+    {
+        return $this->rajaOngkir->calculateShipping($cityId, $weight);
+    }
 }
 
 $database = new Database();
@@ -123,7 +131,13 @@ $requestMethod = $_SERVER["REQUEST_METHOD"];
 if ($requestMethod === "POST") {
     echo json_encode($orders->createOrder($data));
 } elseif ($requestMethod === "GET") {
-    if (isset($_GET['email']) && isset($_GET['trans_id'])) {
+    if (isset($_GET['action']) && $_GET['action'] === 'shipping') {
+        if (isset($_GET['city_id']) && isset($_GET['weight'])) {
+            echo json_encode($orders->calculateShipping($_GET['city_id'], $_GET['weight']));
+        } else {
+            echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
+        }
+    } elseif (isset($_GET['email']) && isset($_GET['trans_id'])) {
         echo json_encode($orders->getOrderDetail($_GET['trans_id'], $_GET['email']));
     } elseif (isset($_GET['email'])) {
         echo json_encode($orders->getOrderHistory($_GET['email']));
