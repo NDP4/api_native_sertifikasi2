@@ -4,7 +4,7 @@ class RajaOngkir
 {
     private $apiKey = "YOUR_API_KEY";
     private $baseUrl = "https://api.rajaongkir.com/starter/";
-    private $originCity = "444";
+    private $originCity = "391";
 
     public function __construct() {}
 
