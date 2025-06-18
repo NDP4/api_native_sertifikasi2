@@ -24,7 +24,6 @@ class Orders
     {
         $this->conn->beginTransaction();
         try {
-
             $query = "INSERT INTO " . $this->order_table . "
                      (email, tgl_order, subtotal, ongkir, total_bayar, alamat_kirim, 
                       telp_kirim, kota, provinsi, lamakirim, kodepos, metodebayar, status) 
@@ -119,29 +118,71 @@ class Orders
     {
         return $this->rajaOngkir->calculateShipping($cityId, $weight);
     }
+
+    public function getProvinces()
+    {
+        return $this->rajaOngkir->getProvinces();
+    }
+
+    public function getCities($provinceId = null)
+    {
+        return $this->rajaOngkir->getCities($provinceId);
+    }
 }
 
-$database = new Database();
-$db = $database->getConnection();
-$orders = new Orders($db);
+// Handle requests
+try {
+    $database = new Database();
+    $db = $database->getConnection();
 
-$data = json_decode(file_get_contents("php://input"), true);
-$requestMethod = $_SERVER["REQUEST_METHOD"];
-
-if ($requestMethod === "POST") {
-    echo json_encode($orders->createOrder($data));
-} elseif ($requestMethod === "GET") {
-    if (isset($_GET['action']) && $_GET['action'] === 'shipping') {
-        if (isset($_GET['city_id']) && isset($_GET['weight'])) {
-            echo json_encode($orders->calculateShipping($_GET['city_id'], $_GET['weight']));
-        } else {
-            echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
-        }
-    } elseif (isset($_GET['email']) && isset($_GET['trans_id'])) {
-        echo json_encode($orders->getOrderDetail($_GET['trans_id'], $_GET['email']));
-    } elseif (isset($_GET['email'])) {
-        echo json_encode($orders->getOrderHistory($_GET['email']));
-    } else {
-        echo json_encode(array("status" => false, "message" => "Missing required parameters"));
+    if (!$db) {
+        echo json_encode(array("status" => false, "message" => "Database connection failed"));
+        exit;
     }
+
+    $orders = new Orders($db);
+    $data = json_decode(file_get_contents("php://input"), true);
+    $requestMethod = $_SERVER["REQUEST_METHOD"];
+
+    if ($requestMethod === "POST") {
+        echo json_encode($orders->createOrder($data));
+    } elseif ($requestMethod === "GET") {
+        if (isset($_GET['action'])) {
+            switch ($_GET['action']) {
+                case 'shipping':
+                    if (isset($_GET['city_id']) && isset($_GET['weight'])) {
+                        echo json_encode($orders->calculateShipping($_GET['city_id'], $_GET['weight']));
+                    } else {
+                        echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
+                    }
+                    break;
+
+                case 'provinces':
+                    echo json_encode($orders->getProvinces());
+                    break;
+
+                case 'cities':
+                    $provinceId = isset($_GET['province_id']) ? $_GET['province_id'] : null;
+                    echo json_encode($orders->getCities($provinceId));
+                    break;
+
+                default:
+                    echo json_encode(array("status" => false, "message" => "Invalid action"));
+                    break;
+            }
+        } elseif (isset($_GET['email']) && isset($_GET['trans_id'])) {
+            echo json_encode($orders->getOrderDetail($_GET['trans_id'], $_GET['email']));
+        } elseif (isset($_GET['email'])) {
+            echo json_encode($orders->getOrderHistory($_GET['email']));
+        } else {
+            echo json_encode(array("status" => false, "message" => "Missing required parameters"));
+        }
+    } else {
+        echo json_encode(array("status" => false, "message" => "Method not allowed"));
+    }
+} catch (Exception $e) {
+    echo json_encode(array(
+        "status" => false,
+        "message" => "Server error: " . $e->getMessage()
+    ));
 }

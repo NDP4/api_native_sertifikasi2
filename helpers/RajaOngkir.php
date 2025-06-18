@@ -2,7 +2,7 @@
 
 class RajaOngkir
 {
-    private $apiKey = "YOUR_API_KEY";
+    private $apiKey = "419d120b08e2598fc331a9a665ba52da";
     private $baseUrl = "https://api.rajaongkir.com/starter/";
     private $originCity = "391";
 
@@ -73,37 +73,4 @@ class RajaOngkir
 
         return $this->curlRequest('cost', $data, 'POST');
     }
-}
-
-if (isset($_GET['action'])) {
-    header('Content-Type: application/json');
-    $rajaOngkir = new RajaOngkir();
-
-    switch ($_GET['action']) {
-        case 'provinces':
-            echo json_encode($rajaOngkir->getProvinces());
-            break;
-
-        case 'cities':
-            $provinceId = isset($_GET['province']) ? $_GET['province'] : null;
-            echo json_encode($rajaOngkir->getCities($provinceId));
-            break;
-
-        case 'cost':
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                $data = json_decode(file_get_contents('php://input'), true);
-                if (isset($data['destination']) && isset($data['weight'])) {
-                    echo json_encode($rajaOngkir->calculateShipping($data['destination'], $data['weight']));
-                } else {
-                    echo json_encode(['error' => 'Missing required parameters']);
-                }
-            } else {
-                echo json_encode(['error' => 'Method not allowed']);
-            }
-            break;
-
-        default:
-            echo json_encode(['error' => 'Invalid action']);
-    }
-    exit;
 }
