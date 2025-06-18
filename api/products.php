@@ -37,21 +37,26 @@ class Products
         return null;
     }
 
-    public function getAll($page = 1, $limit = 10)
+    public function getAll($page = null, $limit = null)
     {
-        $page = (int)$page;
-        $limit = (int)$limit;
-        $start = ($page - 1) * $limit;
+        if ($page !== null && $limit !== null) {
+            $page = (int)$page;
+            $limit = (int)$limit;
+            $start = ($page - 1) * $limit;
 
-        $count_query = "SELECT COUNT(*) as total FROM " . $this->table_name;
-        $count_stmt = $this->conn->prepare($count_query);
-        $count_stmt->execute();
-        $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
+            $count_query = "SELECT COUNT(*) as total FROM " . $this->table_name;
+            $count_stmt = $this->conn->prepare($count_query);
+            $count_stmt->execute();
+            $total_records = $count_stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-        $query = "SELECT * FROM " . $this->table_name . " LIMIT :start, :limit";
-        $stmt = $this->conn->prepare($query);
-        $stmt->bindValue(':start', $start, PDO::PARAM_INT);
-        $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+            $query = "SELECT * FROM " . $this->table_name . " LIMIT :start, :limit";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindValue(':start', $start, PDO::PARAM_INT);
+            $stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        } else {
+            $query = "SELECT * FROM " . $this->table_name;
+            $stmt = $this->conn->prepare($query);
+        }
         $stmt->execute();
 
         $products = array();
@@ -62,16 +67,21 @@ class Products
             array_push($products, $row);
         }
 
-        return array(
+        $response = array(
             "status" => true,
-            "data" => $products,
-            "pagination" => array(
+            "data" => $products
+        );
+
+        if ($page !== null && $limit !== null) {
+            $response["pagination"] = array(
                 "page" => $page,
                 "limit" => $limit,
                 "total_records" => (int)$total_records,
                 "total_pages" => ceil($total_records / $limit)
-            )
-        );
+            );
+        }
+
+        return $response;
     }
 
     public function getById($kode)
