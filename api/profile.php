@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
-header("Access-Control-Allow-Methods: GET, PUT");
+header("Access-Control-Allow-Methods: GET, PUT, POST");
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
 
 include_once '../config/database.php';
@@ -47,13 +47,11 @@ class Profile
             $data['telp']
         ];
 
-        // Handle password update if provided
         if (isset($data['password']) && !empty($data['password'])) {
             $query .= ", PASSWORD = ?";
             $params[] = password_hash($data['password'], PASSWORD_DEFAULT);
         }
 
-        // Handle photo upload if provided
         if (isset($data['foto']) && !empty($data['foto'])) {
             $query .= ", foto = ?";
             $params[] = $data['foto'];
@@ -77,13 +75,25 @@ $database = new Database();
 $db = $database->getConnection();
 $profile = new Profile($db);
 
-$data = json_decode(file_get_contents("php://input"), true);
 $requestMethod = $_SERVER["REQUEST_METHOD"];
 
 if ($requestMethod === "GET" && isset($_GET['id'])) {
     echo json_encode($profile->getProfile($_GET['id']));
-} elseif ($requestMethod === "PUT" && isset($_GET['id'])) {
-    echo json_encode($profile->updateProfile($_GET['id'], $data));
+} elseif ($requestMethod === "PUT" || $requestMethod === "POST") {
+    if (isset($_GET['id'])) {
+        // For PUT requests, we need to get the raw input
+        $putdata = file_get_contents("php://input");
+        $data = json_decode($putdata, true);
+
+        if ($data === null) {
+            echo json_encode(array("status" => false, "message" => "Invalid JSON data"));
+            exit;
+        }
+
+        echo json_encode($profile->updateProfile($_GET['id'], $data));
+    } else {
+        echo json_encode(array("status" => false, "message" => "Missing ID parameter"));
+    }
 } else {
-    echo json_encode(array("status" => false, "message" => "Invalid request or missing ID"));
+    echo json_encode(array("status" => false, "message" => "Invalid request method or missing ID"));
 }
