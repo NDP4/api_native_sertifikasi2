@@ -131,15 +131,22 @@ $requestMethod = $_SERVER["REQUEST_METHOD"];
 if ($requestMethod === "POST") {
     echo json_encode($orders->createOrder($data));
 } elseif ($requestMethod === "GET") {
-    if (isset($_GET['action']) && $_GET['action'] === 'shipping') {
-        if (isset($_GET['city_id']) && isset($_GET['weight'])) {
-            $result = $orders->calculateShipping($_GET['city_id'], $_GET['weight']);
-            error_log('Shipping calculation result: ' . print_r($result, true));
-            echo json_encode($result);
-        } else {
-            echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
+    if (isset($_GET['action'])) {
+        if ($_GET['action'] === 'shipping') {
+            if (isset($_GET['city_id']) && isset($_GET['weight'])) {
+                $result = $orders->calculateShipping($_GET['city_id'], $_GET['weight']);
+                error_log('RajaOngkir API Request - city_id: ' . $_GET['city_id'] . ', weight: ' . $_GET['weight']);
+                error_log('RajaOngkir API Response: ' . print_r($result, true));
+                echo json_encode($result);
+                exit;
+            } else {
+                echo json_encode(array("status" => false, "message" => "Missing city_id or weight parameter"));
+                exit;
+            }
         }
-    } elseif (isset($_GET['email']) && isset($_GET['trans_id'])) {
+    }
+
+    if (isset($_GET['email']) && isset($_GET['trans_id'])) {
         echo json_encode($orders->getOrderDetail($_GET['trans_id'], $_GET['email']));
     } elseif (isset($_GET['email'])) {
         echo json_encode($orders->getOrderHistory($_GET['email']));
