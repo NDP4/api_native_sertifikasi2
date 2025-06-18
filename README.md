@@ -327,3 +327,11 @@ Silakan buat issue atau pull request jika ingin berkontribusi pada project ini.
 ## Lisensi
 
 MIT License
+
+# Penggunaaan Web Admin Batik
+
+1. Update /admin/config/config.php sesuaikan dengan user, password, dan database
+   define('DB_USER', 'root');
+   define('DB_PASS', '');
+   define('DB_NAME', 'batiknusantara');
+2. Cek Web Admin di situs http://localhost/api_native_sertifikasi2/admin/index.php

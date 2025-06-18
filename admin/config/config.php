@@ -16,7 +16,7 @@ define('DB_HOST', 'localhost');
 
 // Lokal
 define('DB_USER', 'root');
-define('DB_PASS', 'Maulana1');
+define('DB_PASS', '');
 define('DB_NAME', 'batiknusantara');
 
 // Optional: Log error ke file khusus
