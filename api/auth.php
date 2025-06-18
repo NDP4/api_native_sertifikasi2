@@ -65,7 +65,6 @@ class Auth
     }
 }
 
-// Handle requests
 $database = new Database();
 $db = $database->getConnection();
 $auth = new Auth($db);

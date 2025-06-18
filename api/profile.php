@@ -73,7 +73,6 @@ class Profile
     }
 }
 
-// Handle requests
 $database = new Database();
 $db = $database->getConnection();
 $profile = new Profile($db);

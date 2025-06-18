@@ -21,7 +21,7 @@ class Orders
     {
         $this->conn->beginTransaction();
         try {
-            // Insert main order
+
             $query = "INSERT INTO " . $this->order_table . "
                      (email, tgl_order, subtotal, ongkir, total_bayar, alamat_kirim, 
                       telp_kirim, kota, provinsi, lamakirim, kodepos, metodebayar, status) 
@@ -44,7 +44,6 @@ class Orders
 
             $orderId = $this->conn->lastInsertId();
 
-            // Insert order details
             foreach ($data['items'] as $item) {
                 $query = "INSERT INTO " . $this->detail_table . "
                          (trans_id, kode_brg, harga_jual, qty, bayar)
@@ -114,7 +113,6 @@ class Orders
     }
 }
 
-// Handle requests
 $database = new Database();
 $db = $database->getConnection();
 $orders = new Orders($db);
