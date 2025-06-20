@@ -5,6 +5,16 @@ include 'connections.php';
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'includes/head.php'; ?>
+<style>
+  .modal-content {
+    background: #fff !important;
+  }
+
+  .sidebar {
+    background: #d2b48c !important;
+    /* pastel brown */
+  }
+</style>
 
 <body class="wrapper">
   <div id="wrapper">
@@ -54,8 +64,7 @@ include 'connections.php';
                   <tbody>
                     <?php $hasil = "select * from tbl_product";
                     $no = 1;
-                    foreach ($conn->query($hasil) as $row)
-                    : ?>
+                    foreach ($conn->query($hasil) as $row) : ?>
                       <tr>
                         <td><?php echo $no++; ?></td>
                         <td><?php echo $row['kode']; ?></td>
@@ -72,13 +81,13 @@ include 'connections.php';
                           <img src="../uploads/products/<?php echo $row['foto']; ?>" style="width: 60px;">
                         </td>
                         <td><?php
-                        $text = $row['deskripsi'];
-                        if (strlen($text) > 60) {
-                          echo substr($text, 0, 60) . "...";
-                        } else {
-                          echo $text;
-                        }
-                        ?> </td>
+                            $text = $row['deskripsi'];
+                            if (strlen($text) > 60) {
+                              echo substr($text, 0, 60) . "...";
+                            } else {
+                              echo $text;
+                            }
+                            ?> </td>
                         <td>
                           <a href="#" class="edit-btn" data-id="<?php echo $row['kode']; ?>"
                             data-merk="<?php echo $row['merk']; ?>" data-kategori="<?php echo $row['kategori']; ?>"
@@ -112,7 +121,7 @@ include 'connections.php';
           <!-- Add Modal -->
           <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title text-white" id="addModalLabel">Tambah Data</h5>
@@ -195,7 +204,7 @@ include 'connections.php';
           <!-- Update Modal -->
           <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel"
             aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
                 <div class="modal-header">
                   <h5 class="modal-title text-white" id="updateModalLabel">Update Data</h5>
@@ -519,7 +528,7 @@ include 'connections.php';
 
   <!-- script modal -->
   <script>
-    document.addEventListener("DOMContentLoaded", function () {
+    document.addEventListener("DOMContentLoaded", function() {
       const toggleDiskonBeli = document.getElementById('toggleDiskonBeli');
       const formDiskonBeli = document.getElementById('formDiskonBeli');
       const inputDiskonBeli = document.getElementById('diskonbeli');
@@ -532,7 +541,7 @@ include 'connections.php';
       const inputHargaJual = document.getElementById('hargajual');
 
       // Diskon Beli toggle
-      toggleDiskonBeli.addEventListener('change', function () {
+      toggleDiskonBeli.addEventListener('change', function() {
         if (this.checked) {
           formDiskonBeli.style.display = 'block';
           inputDiskonBeli.required = true;
@@ -544,7 +553,7 @@ include 'connections.php';
       });
 
       // Diskon Jual toggle
-      toggleDiskonJual.addEventListener('change', function () {
+      toggleDiskonJual.addEventListener('change', function() {
         if (this.checked) {
           formDiskonJual.style.display = 'block';
           inputDiskonJual.required = true;
@@ -560,7 +569,7 @@ include 'connections.php';
       });
 
       // Hitung Harga Jual otomatis berdasarkan diskon
-      inputDiskonJual.addEventListener('input', function () {
+      inputDiskonJual.addEventListener('input', function() {
         const hargaPokok = parseFloat(inputHargaPokok.value);
         const diskon = parseFloat(inputDiskonJual.value);
         if (!isNaN(hargaPokok) && !isNaN(diskon)) {
@@ -570,7 +579,7 @@ include 'connections.php';
       });
 
       // Jika harga pokok berubah, update juga harga jual
-      inputHargaPokok.addEventListener('input', function () {
+      inputHargaPokok.addEventListener('input', function() {
         if (toggleDiskonJual.checked) {
           const diskon = parseFloat(inputDiskonJual.value);
           const hargaPokok = parseFloat(inputHargaPokok.value);
@@ -585,24 +594,48 @@ include 'connections.php';
     });
 
     // DataTable
-    $(document).ready(function () {
+    $(document).ready(function() {
       if ($.fn.DataTable.isDataTable('#dataTable')) {
         $('#dataTable').DataTable().destroy();
       }
       var table = $('#dataTable').DataTable({
-        columnDefs: [
-          { width: '5%', targets: 0 },
-          { width: '8%', targets: 1 },
-          { width: '10%', targets: 2 },
-          { width: '10%', targets: 3 },
-          { width: '15%', targets: 4 },
-          { width: '10%', targets: 5 },
-          { width: '10%', targets: 6 },
-          { width: '10%', targets: 7 },
+        columnDefs: [{
+            width: '5%',
+            targets: 0
+          },
+          {
+            width: '8%',
+            targets: 1
+          },
+          {
+            width: '10%',
+            targets: 2
+          },
+          {
+            width: '10%',
+            targets: 3
+          },
+          {
+            width: '15%',
+            targets: 4
+          },
+          {
+            width: '10%',
+            targets: 5
+          },
+          {
+            width: '10%',
+            targets: 6
+          },
+          {
+            width: '10%',
+            targets: 7
+          },
         ]
       });
+
       function bindEditButtons() {
-        $(".edit-btn").on("click", function () {
+        $(".edit-btn").on("click", function() {
           var id = $(this).data("id");
           var merk = $(this).data("merk");
           var kategori = $(this).data("kategori");
@@ -628,9 +661,9 @@ include 'connections.php';
           $("#update-diskonjual").val(diskonjual);
           $("#update-stok").val(stok);
           $("#update-deskripsi").val(deskripsi);
-          $("#update-foto").on("change", function () {
+          $("#update-foto").on("change", function() {
             var reader = new FileReader();
-            reader.onload = function (e) {
+            reader.onload = function(e) {
               $("#preview-foto").attr("src", e.target.result);
             };
             reader.readAsDataURL(this.files[0]);
@@ -639,8 +672,9 @@ include 'connections.php';
           $("#updateModal").modal("show");
         });
       }
+
       function bindAddButtons() {
-        $(".add-btn").on("click", function () {
+        $(".add-btn").on("click", function() {
           try {
             $("#addModal").modal("show");
             console.log("Modal 'Tambah Data' berhasil dimunculkan.");
@@ -650,8 +684,9 @@ include 'connections.php';
         });
 
       }
+
       function bindDelButtons() {
-        $(".delete-link").on("click", function (event) {
+        $(".delete-link").on("click", function(event) {
           event.preventDefault();
           var id = $(this).data("id");
 
@@ -670,26 +705,27 @@ include 'connections.php';
           });
         });
       }
+
       function previewImage(input, previewElement) {
         if (input.files && input.files[0]) {
           var reader = new FileReader();
-          reader.onload = function (e) {
+          reader.onload = function(e) {
             $(previewElement).attr("src", e.target.result);
           };
           reader.readAsDataURL(input.files[0]);
         }
       }
-      $("#foto").on("change", function () {
+      $("#foto").on("change", function() {
         previewImage(this, "#preview-foto-upload");
       });
-      $("#update-foto").on("change", function () {
+      $("#update-foto").on("change", function() {
         previewImage(this, "#preview-foto");
       });
 
       bindAddButtons();
       bindEditButtons();
       bindDelButtons();
-      table.on('draw', function () {
+      table.on('draw', function() {
         bindEditButtons();
         bindDelButtons();
       });
