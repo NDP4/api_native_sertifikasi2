@@ -10,6 +10,10 @@ include 'connections.php';
     background: #fff !important;
   }
 
+  .container-fluid {
+    background: #fff !important;
+  }
+
   .sidebar {
     background: #d2b48c !important;
     /* pastel brown */
