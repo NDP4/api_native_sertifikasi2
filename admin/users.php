@@ -42,6 +42,32 @@ include 'connections.php';
                     </tr>
                   </thead>
                   <tbody>
+                    <?php
+                    $hasil = "SELECT * FROM tbl_pelanggan";
+                    $no = 1;
+                    foreach ($conn->query($hasil) as $row) : ?>
+                      <tr>
+                        <td><?= $no++; ?></td>
+                        <td><?= htmlspecialchars($row['nama']); ?></td>
+                        <td><?= htmlspecialchars($row['email']); ?></td>
+                        <td><?= htmlspecialchars($row['telp']); ?></td>
+                        <td><?= htmlspecialchars($row['kota']); ?></td>
+                        <td><?= htmlspecialchars($row['provinsi']); ?></td>
+                        <td>
+                          <a href="#" class="edit-btn text-warning" data-id="<?= $row['id']; ?>" data-nama="<?= htmlspecialchars($row['nama']); ?>" data-email="<?= htmlspecialchars($row['email']); ?>" data-telp="<?= htmlspecialchars($row['telp']); ?>" data-kota="<?= htmlspecialchars($row['kota']); ?>" data-provinsi="<?= htmlspecialchars($row['provinsi']); ?>">
+                            <li class="fa fa-solid fa-pen"></li>
+                            <br>
+                            <span>edit</span>
+                          </a>
+                          <hr>
+                          <a href="?delete_id=<?= $row['id']; ?>" style="color: #e74a3b" class="delete-link">
+                            <li class="fa fa-solid fa-trash"></li>
+                            <br>
+                            <span>Hapus</span>
+                          </a>
+                        </td>
+                      </tr>
+                    <?php endforeach ?>
                   </tbody>
                 </table>
               </div>
@@ -63,27 +89,27 @@ include 'connections.php';
                   <form id="addUserForm" action="" method="POST">
                     <div class="form-group">
                       <label>Nama</label>
-                      <input type="text" class="form-control" id="add-nama" name="nama" required>
+                      <input type="text" class="form-control" name="nama" required>
                     </div>
                     <div class="form-group">
                       <label>Email</label>
-                      <input type="email" class="form-control" id="add-email" name="email" required>
+                      <input type="email" class="form-control" name="email" required>
                     </div>
                     <div class="form-group">
                       <label>Telp</label>
-                      <input type="text" class="form-control" id="add-telp" name="telp">
+                      <input type="text" class="form-control" name="telp">
                     </div>
                     <div class="form-group">
                       <label>Kota</label>
-                      <input type="text" class="form-control" id="add-kota" name="kota">
+                      <input type="text" class="form-control" name="kota">
                     </div>
                     <div class="form-group">
                       <label>Provinsi</label>
-                      <input type="text" class="form-control" id="add-provinsi" name="provinsi">
+                      <input type="text" class="form-control" name="provinsi">
                     </div>
                     <div class="form-group">
                       <label>Password</label>
-                      <input type="password" class="form-control" id="add-password" name="password" required>
+                      <input type="password" class="form-control" name="password" required>
                     </div>
                     <button type="submit" class="btn btn-primary" name="add">Tambah</button>
                   </form>
@@ -105,30 +131,30 @@ include 'connections.php';
                 </div>
                 <div class="modal-body">
                   <form id="updateUserForm" action="" method="POST">
-                    <input type="hidden" id="update-id" name="id">
+                    <input type="hidden" name="id" id="update-id">
                     <div class="form-group">
                       <label>Nama</label>
-                      <input type="text" class="form-control" id="update-nama" name="nama" required>
+                      <input type="text" class="form-control" name="nama" id="update-nama" required>
                     </div>
                     <div class="form-group">
                       <label>Email</label>
-                      <input type="email" class="form-control" id="update-email" name="email" required>
+                      <input type="email" class="form-control" name="email" id="update-email" required>
                     </div>
                     <div class="form-group">
                       <label>Telp</label>
-                      <input type="text" class="form-control" id="update-telp" name="telp">
+                      <input type="text" class="form-control" name="telp" id="update-telp">
                     </div>
                     <div class="form-group">
                       <label>Kota</label>
-                      <input type="text" class="form-control" id="update-kota" name="kota">
+                      <input type="text" class="form-control" name="kota" id="update-kota">
                     </div>
                     <div class="form-group">
                       <label>Provinsi</label>
-                      <input type="text" class="form-control" id="update-provinsi" name="provinsi">
+                      <input type="text" class="form-control" name="provinsi" id="update-provinsi">
                     </div>
                     <div class="form-group">
                       <label>Password</label>
-                      <input type="password" class="form-control" id="update-password" name="password">
+                      <input type="password" class="form-control" name="password" id="update-password">
                       <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah password.</small>
                     </div>
                     <button type="submit" class="btn btn-primary" name="update">Update</button>
@@ -138,6 +164,65 @@ include 'connections.php';
             </div>
           </div>
           <!-- End of Update User Modal -->
+
+          <?php
+          // Handle Add User
+          if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['add'])) {
+            $nama = $_POST['nama'];
+            $email = $_POST['email'];
+            $telp = $_POST['telp'];
+            $kota = $_POST['kota'];
+            $provinsi = $_POST['provinsi'];
+            $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+            $sql = "INSERT INTO tbl_pelanggan (nama, email, telp, kota, provinsi, password) VALUES (?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ssssss", $nama, $email, $telp, $kota, $provinsi, $password);
+            if ($stmt->execute()) {
+              echo "<script>Swal.fire({title: 'Berhasil!',text: 'User berhasil ditambahkan.',icon: 'success',confirmButtonText: 'OK'}).then((result) => {if (result.isConfirmed) {window.location.href = 'users.php';}});</script>";
+            } else {
+              echo "<script>Swal.fire({title: 'Gagal!',text: 'Gagal menambahkan user.',icon: 'error',confirmButtonText: 'OK'});</script>";
+            }
+          }
+
+          // Handle Update User
+          if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+            $id = $_POST['id'];
+            $nama = $_POST['nama'];
+            $email = $_POST['email'];
+            $telp = $_POST['telp'];
+            $kota = $_POST['kota'];
+            $provinsi = $_POST['provinsi'];
+            $password = $_POST['password'];
+            if (!empty($password)) {
+              $password = password_hash($password, PASSWORD_DEFAULT);
+              $sql = "UPDATE tbl_pelanggan SET nama=?, email=?, telp=?, kota=?, provinsi=?, password=? WHERE id=?";
+              $stmt = $conn->prepare($sql);
+              $stmt->bind_param("ssssssi", $nama, $email, $telp, $kota, $provinsi, $password, $id);
+            } else {
+              $sql = "UPDATE tbl_pelanggan SET nama=?, email=?, telp=?, kota=?, provinsi=? WHERE id=?";
+              $stmt = $conn->prepare($sql);
+              $stmt->bind_param("sssssi", $nama, $email, $telp, $kota, $provinsi, $id);
+            }
+            if ($stmt->execute()) {
+              echo "<script>Swal.fire({title: 'Berhasil!',text: 'User berhasil diupdate.',icon: 'success',confirmButtonText: 'OK'}).then((result) => {if (result.isConfirmed) {window.location.href = 'users.php';}});</script>";
+            } else {
+              echo "<script>Swal.fire({title: 'Gagal!',text: 'Gagal update user.',icon: 'error',confirmButtonText: 'OK'});</script>";
+            }
+          }
+
+          // Handle Delete User
+          if (isset($_GET['delete_id'])) {
+            $id = $_GET['delete_id'];
+            $sql = "DELETE FROM tbl_pelanggan WHERE id = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $id);
+            if ($stmt->execute()) {
+              echo "<script>Swal.fire({title: 'Berhasil!',text: 'User berhasil dihapus.',icon: 'success',confirmButtonText: 'OK'}).then((result) => {if (result.isConfirmed) {window.location.href = 'users.php';}});</script>";
+            } else {
+              echo "<script>Swal.fire({title: 'Gagal!',text: 'Gagal hapus user.',icon: 'error',confirmButtonText: 'OK'});</script>";
+            }
+          }
+          ?>
 
         </div>
         <!-- /.container-fluid -->
@@ -152,131 +237,42 @@ include 'connections.php';
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
   <script src="js/app.js"></script>
-  <script src="vendor/datatables/jquery.dataTables.min.js"></script>
-  <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
   <script>
     $(document).ready(function() {
-      var userTable = $('#userTable').DataTable({
-        ajax: {
-          url: '../api/users.php',
-          dataSrc: function(json) {
-            return json.data || [];
-          }
-        },
-        columns: [{
-            data: null
-          },
-          {
-            data: 'nama'
-          },
-          {
-            data: 'email'
-          },
-          {
-            data: 'telp'
-          },
-          {
-            data: 'kota'
-          },
-          {
-            data: 'provinsi'
-          },
-          {
-            data: null,
-            render: function(data, type, row) {
-              return `<a href="#" class="edit-btn text-warning" data-id="${row.id}" data-nama="${row.nama}" data-email="${row.email}" data-telp="${row.telp}" data-kota="${row.kota}" data-provinsi="${row.provinsi}"><li class="fa fa-solid fa-pen"></li><br><span>edit</span></a><hr><a href="#" style="color: #e74a3b" class="delete-link" data-id="${row.id}"><li class="fa fa-solid fa-trash"></li><br><span>Hapus</span></a>`;
-            }
-          }
-        ],
-        columnDefs: [{
-          targets: 0,
-          render: function(data, type, row, meta) {
-            return meta.row + 1;
-          },
-          width: '5%'
-        }]
-      });
-
-      // Add User
-      $("#addUserForm").submit(function(e) {
-        e.preventDefault();
-        var data = {
-          nama: $('#add-nama').val(),
-          email: $('#add-email').val(),
-          telp: $('#add-telp').val(),
-          kota: $('#add-kota').val(),
-          provinsi: $('#add-provinsi').val(),
-          password: $('#add-password').val()
-        };
-        $.ajax({
-          url: '../api/users.php',
-          type: 'POST',
-          data: JSON.stringify(data),
-          contentType: 'application/json',
-          success: function(res) {
-            $('#addUserModal').modal('hide');
-            userTable.ajax.reload();
-          }
-        });
-      });
-
       // Edit User
-      $('#userTable tbody').on('click', '.edit-btn', function() {
+      $('.edit-btn').on('click', function() {
         var id = $(this).data('id');
-        $.get('../api/users.php?id=' + id, function(res) {
-          if (res.status) {
-            var u = res.data;
-            $('#update-id').val(u.id);
-            $('#update-nama').val(u.nama);
-            $('#update-email').val(u.email);
-            $('#update-telp').val(u.telp);
-            $('#update-kota').val(u.kota);
-            $('#update-provinsi').val(u.provinsi);
-            $('#update-password').val('');
-            $('#updateUserModal').modal('show');
-          } else {
-            alert('User tidak ditemukan');
-          }
-        }, 'json');
+        var nama = $(this).data('nama');
+        var email = $(this).data('email');
+        var telp = $(this).data('telp');
+        var kota = $(this).data('kota');
+        var provinsi = $(this).data('provinsi');
+        $('#update-id').val(id);
+        $('#update-nama').val(nama);
+        $('#update-email').val(email);
+        $('#update-telp').val(telp);
+        $('#update-kota').val(kota);
+        $('#update-provinsi').val(provinsi);
+        $('#update-password').val('');
+        $('#updateUserModal').modal('show');
       });
-
-      // Update User
-      $('#updateUserForm').submit(function(e) {
+      // Delete confirmation
+      $('.delete-link').on('click', function(e) {
         e.preventDefault();
-        var id = $('#update-id').val();
-        var data = {
-          nama: $('#update-nama').val(),
-          email: $('#update-email').val(),
-          telp: $('#update-telp').val(),
-          kota: $('#update-kota').val(),
-          provinsi: $('#update-provinsi').val(),
-          password: $('#update-password').val()
-        };
-        $.ajax({
-          url: '../api/users.php?id=' + id,
-          type: 'PUT',
-          data: JSON.stringify(data),
-          contentType: 'application/json',
-          success: function(res) {
-            $('#updateUserModal').modal('hide');
-            userTable.ajax.reload();
+        var href = $(this).attr('href');
+        Swal.fire({
+          title: "Apakah Anda yakin?",
+          text: "User akan dihapus permanen.",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Ya, hapus!",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = href;
           }
         });
-      });
-
-      // Delete User
-      $('#userTable tbody').on('click', '.delete-link', function(e) {
-        e.preventDefault();
-        var id = $(this).data('id');
-        if (confirm('Yakin ingin menghapus user ini?')) {
-          $.ajax({
-            url: '../api/users.php?id=' + id,
-            type: 'DELETE',
-            success: function(res) {
-              userTable.ajax.reload();
-            }
-          });
-        }
       });
     });
   </script>
