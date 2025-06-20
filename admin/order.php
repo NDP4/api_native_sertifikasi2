@@ -44,7 +44,6 @@ include 'connections.php';
                                         $no = 1;
                                         $res = $conn->query($hasil);
                                         while ($row = $res->fetch_assoc()) :
-                                            // Ambil detail order sekalian
                                             $detail_items = array();
                                             $sql2 = "SELECT d.*, p.nama_produk FROM tbl_order_detail d LEFT JOIN tbl_produk p ON d.kode_brg = p.kode_brg WHERE d.trans_id = " . $row['trans_id'];
                                             $res2 = $conn->query($sql2);
@@ -67,12 +66,12 @@ include 'connections.php';
                                                     ?>
                                                 </td>
                                                 <td>
-                                                    <button type="button" class="btn btn-info btn-detail"
-                                                        data-order='<?= json_encode($row) ?>'
-                                                        data-items='<?= json_encode($detail_items) ?>'>
+                                                    <a href="#" class="btn btn-info btn-detail"
+                                                        data-order='<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8') ?>'
+                                                        data-items='<?= htmlspecialchars(json_encode($detail_items), ENT_QUOTES, 'UTF-8') ?>'>
                                                         <li class="fa fa-solid fa-eye"></li>
                                                         <br><span>Detail</span>
-                                                    </button>
+                                                    </a>
                                                     <hr>
                                                     <a href="?delete_id=<?= $row['trans_id']; ?>" style="color: #e74a3b" class="delete-link">
                                                         <li class="fa fa-solid fa-trash"></li>
@@ -157,9 +156,12 @@ include 'connections.php';
                 });
             });
             // Detail order modal
-            $('.btn-detail').on('click', function() {
+            $('.btn-detail').on('click', function(e) {
+                e.preventDefault();
                 var order = $(this).data('order');
                 var items = $(this).data('items');
+                if (typeof order === 'string') order = JSON.parse(order);
+                if (typeof items === 'string') items = JSON.parse(items);
                 var statusText = ['Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'];
                 var badge = ['secondary', 'info', 'primary', 'success', 'danger'];
                 var html = '';
