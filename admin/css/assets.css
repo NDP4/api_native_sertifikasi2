@@ -24,7 +24,7 @@
   --white: #fff;
   --gray: #858796;
   --gray-dark: #5a5c69;
-  --primary:#450e0e;
+  --primary: #450e0e;
   --primary-color: #450e0e;
   --secondary-color: #2e0707;
   --glass-bg: rgba(255, 255, 255, 0.06);
@@ -403,6 +403,7 @@ h6,
   margin-bottom: 0.5rem;
   font-weight: 400;
   line-height: 1.2;
+  color: #2563eb;
 }
 
 h1,
@@ -1609,6 +1610,7 @@ pre code {
 
 .table th,
 .table td {
+  color: #334155;
   padding: 0.75rem;
   vertical-align: top;
   border-top: 1px solid #e3e6f0;
@@ -2535,15 +2537,15 @@ fieldset:disabled a.btn {
 }
 
 .btn-primary {
+  background-color: #2563eb;
+  border-color: #2563eb;
   color: #fff;
-  background-color: #481969;
-  border-color: #481969;
 }
 
 .btn-primary:hover {
+  background-color: #174ea6;
+  border-color: #174ea6;
   color: #fff;
-  background-color: #7e24bf;
-  border-color: #631b96;
 }
 
 .btn-primary:focus,
@@ -4834,17 +4836,15 @@ input[type="button"].btn-block {
 }
 
 .card {
+  background-color: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: 0 2px 16px rgba(44, 62, 80, 0.08);
   position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: var(--glass-bg);
-  background-clip: border-box;
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  border-radius: 15px;
 }
 
 .card > hr {
@@ -6123,15 +6123,15 @@ a.close.disabled {
 }
 
 .modal-content {
+  background-color: var(--modal-glass-bg);
+  border-radius: 16px;
   position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   pointer-events: auto;
-  background-color: var(--modal-glass-bg);
   background-clip: padding-box;
   border: 1px solid var(--glass-border);
-  border-radius: 15px;
   outline: 0;
 }
 

@@ -5,20 +5,6 @@ include 'connections.php';
 <!DOCTYPE html>
 <html lang="en">
 <?php include 'includes/head.php'; ?>
-<style>
-  .modal-content {
-    background: #fff !important;
-  }
-
-  .container-fluid {
-    background: #fff !important;
-  }
-
-  .sidebar {
-    background: #d2b48c !important;
-    /* pastel brown */
-  }
-</style>
 
 <body class="wrapper">
   <div id="wrapper">
@@ -735,6 +721,34 @@ include 'connections.php';
       });
     });
   </script>
+
+  <style>
+    .container-fluid {
+      background: #f4f6fb;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 2px 16px rgba(44, 62, 80, 0.04);
+    }
+
+    .table th,
+    .table td {
+      vertical-align: middle;
+    }
+
+    .modal-content {
+      border-radius: 16px;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      border-color: #2563eb;
+    }
+
+    .btn-primary:hover {
+      background: #174ea6;
+      border-color: #174ea6;
+    }
+  </style>
 
 
 </body>
