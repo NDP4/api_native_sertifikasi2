@@ -29,6 +29,16 @@
   </li>
 
   <!-- Divider -->
+  <hr class="sidebar-divider" />
+  <!-- Heading -->
+  <div class="sidebar-heading">User</div>
+  <li class="nav-item <?= $page === 'users' ? 'active' : '' ?>">
+    <a class="nav-link" href="users.php">
+      <i class="fas fa-solid fa-users"></i>
+      <span>Users</span></a>
+  </li>
+
+  <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block" />
 
   <!-- Sidebar Toggler (Sidebar) -->
