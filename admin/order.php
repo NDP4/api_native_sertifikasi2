@@ -78,18 +78,13 @@ include 'connections.php';
                     <!-- end table -->
 
                     <!-- Detail Order Modal -->
-                    <div class="modal fade" id="detailOrderModal" tabindex="-1" role="dialog" aria-labelledby="detailOrderModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal" id="modalDetailOrder" tabindex="-1">
+                        <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title text-white" id="detailOrderModalLabel">Detail Order</h5>
-                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">x</span>
-                                    </button>
+                                    <h5>Detail Order</h5>
                                 </div>
-                                <div class="modal-body" id="order-detail-body">
-                                    <!-- detail order akan di-load via ajax -->
-                                </div>
+                                <div class="modal-body"></div>
                             </div>
                         </div>
                     </div>
@@ -224,6 +219,18 @@ include 'connections.php';
                     if (result.isConfirmed) {
                         window.location.href = href;
                     }
+                });
+            });
+            $('.btn-detail').on('click', function() {
+                var trans_id = $(this).data('transid');
+                var email = $(this).data('email');
+                $.get('/api/orders.php', {
+                    email: email,
+                    trans_id: trans_id
+                }, function(res) {
+                    // isi modal dengan data res
+                    $('#modalDetailOrder .modal-body').html( /* render data */ );
+                    $('#modalDetailOrder').modal('show');
                 });
             });
         });
