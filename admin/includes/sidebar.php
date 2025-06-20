@@ -40,12 +40,12 @@
 
   <!-- Nav Item - Orders -->
   <!-- devider -->
-  <hr class="sidebar-divider" />
+  <!-- <hr class="sidebar-divider" />
   <li class="nav-item <?= $page === 'orders' ? 'active' : '' ?>">
     <a class="nav-link" href="order.php">
       <i class="fas fa-solid fa-shopping-cart"></i>
       <span>Orders</span></a>
-  </li>
+  </li> -->
 
   <!-- Divider -->
   <hr class="sidebar-divider d-none d-md-block" />
