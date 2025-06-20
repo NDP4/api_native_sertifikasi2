@@ -79,7 +79,7 @@ include 'connections.php';
                             }
                             ?> </td>
                         <td>
-                          <a href="#" class="edit-btn text-primary" data-id="<?php echo $row['kode']; ?>"
+                          <a href="#" class="edit-btn text-warning" data-id="<?php echo $row['kode']; ?>"
                             data-merk="<?php echo $row['merk']; ?>" data-kategori="<?php echo $row['kategori']; ?>"
                             data-satuan="<?php echo $row['satuan']; ?>" data-hargabeli="<?php echo $row['hargabeli']; ?>"
                             data-diskonbeli="<?php echo $row['diskonbeli']; ?>"
