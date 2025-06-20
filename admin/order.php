@@ -42,17 +42,15 @@ include 'connections.php';
                                         <?php
                                         $hasil = "SELECT * FROM tbl_order ORDER BY tgl_order DESC";
                                         $no = 1;
-                                        foreach ($conn->query($hasil) as $row) :
+                                        $res = $conn->query($hasil);
+                                        while ($row = $res->fetch_assoc()) :
                                             // Ambil detail order sekalian
-                                            $stmt2 = $conn->prepare("SELECT d.*, p.nama_produk FROM tbl_order_detail d LEFT JOIN tbl_produk p ON d.kode_brg = p.kode_brg WHERE d.trans_id = ?");
-                                            $stmt2->bind_param("i", $row['trans_id']);
-                                            $stmt2->execute();
-                                            $items = $stmt2->get_result();
-                                            $detail_items = [];
-                                            while ($item = $items->fetch_assoc()) {
+                                            $detail_items = array();
+                                            $sql2 = "SELECT d.*, p.nama_produk FROM tbl_order_detail d LEFT JOIN tbl_produk p ON d.kode_brg = p.kode_brg WHERE d.trans_id = " . $row['trans_id'];
+                                            $res2 = $conn->query($sql2);
+                                            while ($item = $res2->fetch_assoc()) {
                                                 $detail_items[] = $item;
                                             }
-                                            $stmt2->close();
                                         ?>
                                             <tr>
                                                 <td><?= $no++; ?></td>
@@ -82,7 +80,7 @@ include 'connections.php';
                                                     </a>
                                                 </td>
                                             </tr>
-                                        <?php endforeach ?>
+                                        <?php endwhile ?>
                                     </tbody>
                                 </table>
                             </div>
